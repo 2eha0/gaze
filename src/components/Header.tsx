@@ -23,7 +23,7 @@ export function Header() {
               'font-mono text-[14px] tracking-wide transition-colors',
               link.active
                 ? 'text-zinc-700 dark:text-zinc-300 border-b-2 border-[#ff6b1a] pb-0.5'
-                : 'text-zinc-400 dark:text-zinc-600 hover:text-zinc-600 dark:hover:text-zinc-400'
+                : 'text-zinc-400 dark:text-zinc-600 hover:text-zinc-600 dark:hover:text-zinc-400',
             )}
           >
             {link.name}

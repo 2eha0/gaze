@@ -1,16 +1,13 @@
 ---
-import '../styles/globals.css';
-import Navigation from '../components/Navigation.astro';
+import '../styles/globals.css'
+import Navigation from '../components/Navigation.astro'
 
 interface Props {
-  title?: string;
-  description?: string;
+  title?: string
+  description?: string
 }
 
-const {
-  title = 'Gaze Dashboard',
-  description = 'Configuration-driven SSG Dashboard'
-} = Astro.props;
+const { title = 'Gaze Dashboard', description = 'Configuration-driven SSG Dashboard' } = Astro.props
 ---
 
 <!doctype html>

@@ -1,23 +1,33 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import GazeLayout from '../components/GazeLayout.astro';
-import { getAllPagePaths, getPageBySlug } from '../utils/gaze';
+/**
+ * Dynamic Page Router
+ * Renders pages based on GazeConfig with widget data fetched at build time
+ */
+
+import GazeLayout from '../components/GazeLayout.astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { fetchPageWidgetData } from '../lib/widgetData'
+import { getAllPagePaths, getPageBySlug } from '../utils/gaze'
+import '../lib/widgets' // Initialize widget registry
 
 export async function getStaticPaths() {
-  return getAllPagePaths();
+  return getAllPagePaths()
 }
 
-const { slug } = Astro.params;
-const page = getPageBySlug(slug);
+const { slug } = Astro.params
+const page = getPageBySlug(slug)
 
 // If page not found, return 404
 if (!page) {
-  return Astro.redirect('/404');
+  return Astro.redirect('/404')
 }
 
-const pageTitle = `${page.name} - Gaze Dashboard`;
+// Fetch data for all widgets in the page at build time
+const widgetDataMap = await fetchPageWidgetData(page)
+
+const pageTitle = `${page.name} - Gaze Dashboard`
 ---
 
 <BaseLayout title={pageTitle}>
-  <GazeLayout page={page} />
+  <GazeLayout page={page} widgetDataMap={widgetDataMap} />
 </BaseLayout>

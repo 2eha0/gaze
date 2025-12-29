@@ -1,0 +1,65 @@
+---
+/**
+ * Weather Widget Content Component
+ * Displays current weather information (content only, no container)
+ * Container and header are handled by Widget.astro
+ */
+
+import type { WidgetProps } from '../../types/widget'
+import type { WeatherData } from './types'
+
+interface Props extends WidgetProps<WeatherData> {}
+
+const { data } = Astro.props
+
+// Temperature color based on value
+const getTempColor = (temp: number): string => {
+  if (temp < 0) return 'text-blue-400'
+  if (temp < 10) return 'text-cyan-400'
+  if (temp < 20) return 'text-green-400'
+  if (temp < 30) return 'text-yellow-400'
+  return 'text-red-400'
+}
+---
+
+{data && (
+  <div class="weather-content">
+    <!-- Location -->
+    <div class="location mb-4">
+      <p class="text-lg text-white/70">{data.location}</p>
+    </div>
+
+    <!-- Temperature Display -->
+    <div class="temperature mb-6">
+      <div class="flex items-baseline gap-2">
+        <span class={`text-6xl font-bold ${getTempColor(data.temperature)}`}>
+          {Math.round(data.temperature)}
+        </span>
+        <span class="text-3xl text-white/50">°C</span>
+      </div>
+      <p class="text-white/60 mt-2 capitalize">{data.condition}</p>
+    </div>
+
+    <!-- Weather Details -->
+    <div class="weather-details grid grid-cols-2 gap-4">
+      <div class="detail-item">
+        <div class="text-sm text-white/40 mb-1">Humidity</div>
+        <div class="text-lg font-medium text-white/80">{data.humidity}%</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="text-sm text-white/40 mb-1">Wind</div>
+        <div class="text-lg font-medium text-white/80">{data.windSpeed} km/h</div>
+      </div>
+    </div>
+  </div>
+)}
+
+<style>
+  .detail-item {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+</style>

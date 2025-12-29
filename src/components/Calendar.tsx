@@ -50,18 +50,23 @@ export function Calendar() {
       {/* Custom header */}
       <div className="flex justify-between items-center mb-3 pb-2 border-b border-zinc-200 dark:border-[#2a2a2a]">
         <span className="text-[14px] font-mono text-zinc-700 dark:text-zinc-300">September</span>
-        <span className="text-[13px] font-mono text-zinc-400 dark:text-zinc-600">Week 36 - 2024</span>
+        <span className="text-[13px] font-mono text-zinc-400 dark:text-zinc-600">
+          Week 36 - 2024
+        </span>
       </div>
 
       <div className="grid grid-cols-7 gap-1">
         {daysOfWeek.map((day) => (
-          <div key={day} className="text-center text-zinc-400 dark:text-zinc-700 text-[13px] font-mono mb-1">
+          <div
+            key={day}
+            className="text-center text-zinc-400 dark:text-zinc-700 text-[13px] font-mono mb-1"
+          >
             {day}
           </div>
         ))}
         {calendarDays.map((item, idx) => (
           <div
-            key={idx}
+            key={`day-${idx}-${item.day}`}
             className={`
               text-center text-[13px] font-mono py-1
               ${item.empty ? '' : 'text-zinc-600 dark:text-zinc-500'}

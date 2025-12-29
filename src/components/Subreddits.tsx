@@ -1,5 +1,5 @@
-import { DashboardCard } from './DashboardCard'
 import { ArrowUp, MessageSquare } from 'lucide-react'
+import { DashboardCard } from './DashboardCard'
 
 const redditPosts = [
   {
@@ -10,7 +10,7 @@ const redditPosts = [
     thumbnail: 'bg-gradient-to-br from-gray-700 to-gray-900',
   },
   {
-    title: 'Google\'s new AI model surpasses GPT-4',
+    title: "Google's new AI model surpasses GPT-4",
     upvotes: 2345,
     comments: 789,
     domain: 'google.com',
@@ -37,12 +37,15 @@ export function Subreddits() {
     <DashboardCard title="/r/Technology">
       <div className="space-y-3">
         {redditPosts.map((post, idx) => (
-          <div key={idx} className="flex gap-3 border-b border-zinc-200 dark:border-[#1a1a1a] last:border-b-0 pb-3 last:pb-0">
+          <div
+            key={`reddit-${idx}-${post.title}`}
+            className="flex gap-3 border-b border-zinc-200 dark:border-[#1a1a1a] last:border-b-0 pb-3 last:pb-0"
+          >
             <div className={`w-16 h-16 ${post.thumbnail} rounded-sm shrink-0`} />
             <div className="flex-1 min-w-0">
-              <a href="#" className="text-[14px] font-mono text-zinc-700 dark:text-zinc-300 hover:text-[#ff6b1a] transition-colors block mb-1 line-clamp-2">
+              <span className="text-[14px] font-mono text-zinc-700 dark:text-zinc-300 hover:text-[#ff6b1a] transition-colors block mb-1 line-clamp-2 cursor-pointer">
                 {post.title}
-              </a>
+              </span>
               <div className="flex items-center gap-2 text-[13px] font-mono text-zinc-500 dark:text-zinc-600">
                 <span className="flex items-center gap-1">
                   <ArrowUp className="w-3 h-3" />

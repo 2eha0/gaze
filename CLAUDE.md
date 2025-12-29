@@ -8,18 +8,18 @@ Gaze is a **Pure SSG Dashboard** (Static Site Generator) following the Glance-li
 
 ## Core Architecture: Build-Time Data Pipeline
 
-The application follows a strict build-time data flow:
+The application fetches all data during Astro's build process:
 
-1. **Data Harvest** (`scripts/harvest.ts`) - Bun script fetches from APIs
-2. **Validation** - Valibot validates the fetched data
-3. **Storage** - Data saved as JSON to `src/content/dashboard/`
-4. **Ingestion** - Astro Content Collections reads JSON during build
-5. **Static Output** - Pure HTML/CSS/JS with no runtime API calls
+1. **Page Rendering** - Astro builds pages from configuration
+2. **Widget Data Fetch** - Each page calls `fetchPageWidgetData()` from `src/lib/widgetData.ts`
+3. **Parallel Fetching** - Widget fetchers run concurrently (max 10 simultaneous requests)
+4. **Error Handling** - Failed widgets show error state instead of breaking the build
+5. **Static Output** - Pure HTML/CSS/JS with pre-fetched data embedded
 
 This means:
 - Never add `fetch()` calls in React components or Astro pages
-- All dynamic data must go through the harvest script
-- The build process depends on running `bun run harvest` first
+- All dynamic data must be fetched through widget fetchers during build
+- Each widget's `fetcher` function runs once per page build
 
 ## Development Commands
 
@@ -28,13 +28,10 @@ This means:
 # Install dependencies (requires Bun runtime)
 bun install
 
-# Fetch data from APIs (required before build)
-bun run harvest
-
-# Development server
+# Development server (fetches data automatically during dev)
 bun run dev
 
-# Production build (includes TypeScript checking)
+# Production build (includes TypeScript checking and data fetching)
 bun run build
 
 # Preview production build
@@ -72,47 +69,39 @@ bun run check
 - Config: `biome.json`
 - Enforces single quotes, trailing commas, 2-space indentation
 
-## Adding New Data Sources
+## Adding New Widgets
 
-To add a new API data source, edit `scripts/harvest.ts`:
+To add a new widget with data fetching:
 
-```typescript
-// 1. Add to DATA_SOURCES configuration
-const DATA_SOURCES: Record<string, DataSourceConfig> = {
-  myNewSource: {
-    url: 'https://api.example.com/endpoint',
-    headers: {
-      'Authorization': `Bearer ${process.env.MY_API_TOKEN}`,
-    },
-  },
-};
+1. **Create widget directory** in `src/widgets/my-widget/`
+2. **Define types** in `types.ts` (config and data interfaces)
+3. **Create fetcher** in `fetcher.ts` (async function that returns data)
+4. **Create component** in `MyWidget.astro` (UI with error handling)
+5. **Export widget** in `index.ts` (combine component + fetcher)
+6. **Register widget** in `src/widgets/index.ts`
 
-// 2. Add environment variable to .env
-// MY_API_TOKEN=your_token_here
+See `src/widgets/README.md` for detailed guide.
 
-// 3. The script automatically fetches, validates, and saves to:
-// src/content/dashboard/data.json
-```
+Widget fetchers:
+- Run during build time only (zero runtime fetching)
+- Support concurrency control (max 10 parallel requests)
+- Must handle errors gracefully (return error object on failure)
+- Can use environment variables for API keys
 
-The harvest script:
-- Handles multiple data sources in parallel
-- Uses Valibot for schema validation
-- Continues on individual source failures
-- Creates placeholder data if no sources configured
+## Widget Data Flow
 
-## Content Collections Schema
+During page build:
+1. Page imports `fetchPageWidgetData` from `src/lib/widgetData.ts`
+2. Function collects all widgets from page configuration
+3. Uses p-limit to fetch data concurrently (max 10 parallel)
+4. Each widget's fetcher runs independently
+5. Returns Map of slug → widget props (config + data)
+6. Page renders widgets with fetched data
 
-Located in `src/content/config.ts`:
-- Collection name: `dashboard`
-- Type: `data` (JSON files, not markdown)
-- Schema: `{ timestamp: string, data: Record<string, unknown> }`
-
-To access in Astro pages:
-```typescript
-import { getCollection } from 'astro:content';
-const dashboardEntries = await getCollection('dashboard');
-const data = dashboardEntries[0]?.data;
-```
+Error handling:
+- Failed fetchers return `{ error: true, message: string }`
+- Widget components check for error and display error state
+- Build continues even if some widgets fail
 
 ## Design System
 
@@ -137,21 +126,20 @@ const data = dashboardEntries[0]?.data;
 
 1. **Don't use @astrojs/tailwind** - The integration is incompatible with Tailwind v4. PostCSS is configured directly.
 
-2. **Always run harvest before build** - The build will fail if `src/content/dashboard/data.json` is missing or stale.
+2. **Widget fetchers must be async** - All widget fetchers must return a Promise, even if data is static.
 
-3. **TypeScript in harvest script** - Use `DataSourceConfig` interface for type safety when adding sources.
+3. **React component hydration** - Interactive components need `client:load` directive in Astro files.
 
-4. **React component hydration** - Interactive components need `client:load` directive in Astro files.
+4. **Environment variables** - Use `.env` for local development (copy from `.env.example`). CI/CD needs secrets configured.
 
-5. **Environment variables** - Use `.env` for local development (copy from `.env.example`). CI/CD needs secrets configured.
+5. **Error handling in widgets** - Always check for error state in widget components before rendering data.
 
 ## CI/CD Considerations
 
 GitHub Actions workflow should:
 1. Install Bun
 2. Run `bun install`
-3. Run `bun run harvest` with environment secrets
-4. Run `bun run build`
-5. Deploy `dist/` directory
+3. Run `bun run build` (fetches data automatically during build)
+4. Deploy `dist/` directory
 
-The harvest script should run on a cron schedule (e.g., every 6 hours) to refresh data.
+The build process fetches fresh data each time, so no separate data refresh step is needed.

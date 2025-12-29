@@ -28,7 +28,9 @@ export function ThemeToggle() {
 
     if (theme === 'system') {
       // 跟随系统
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
       root.classList.add(systemTheme)
     } else {
       root.classList.add(theme)
@@ -76,7 +78,7 @@ export function ThemeToggle() {
       onClick={cycleTheme}
       className={cn(
         'px-3 h-8 rounded-md flex items-center gap-2 glass hover:bg-white/10 transition-colors',
-        'text-xs font-mono'
+        'text-xs font-mono',
       )}
       aria-label={`Current theme: ${getLabel()}. Click to cycle.`}
       title={`Current: ${getLabel()}`}

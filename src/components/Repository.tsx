@@ -1,5 +1,5 @@
+import { CircleDot, GitFork, GitPullRequest, Star } from 'lucide-react'
 import { DashboardCard } from './DashboardCard'
-import { Star, GitFork, GitPullRequest, CircleDot } from 'lucide-react'
 
 const pullRequests = [
   { title: 'Add dark mode support', number: 123, time: '2d' },
@@ -17,7 +17,9 @@ export function Repository() {
   return (
     <DashboardCard>
       <div className="mb-4">
-        <h2 className="text-[14px] font-mono text-zinc-700 dark:text-zinc-300 mb-2">glanceapp/glance</h2>
+        <h2 className="text-[14px] font-mono text-zinc-700 dark:text-zinc-300 mb-2">
+          glanceapp/glance
+        </h2>
         <div className="flex items-center gap-3 text-[13px] font-mono text-zinc-500 dark:text-zinc-600">
           <span className="flex items-center gap-1">
             <Star className="w-3 h-3" />
@@ -40,11 +42,16 @@ export function Repository() {
           </div>
           <div className="space-y-2">
             {pullRequests.map((pr) => (
-              <div key={pr.number} className="flex justify-between items-start gap-2">
-                <a href="#" className="text-[14px] font-mono text-zinc-700 dark:text-zinc-300 hover:text-[#ff6b1a] transition-colors flex-1 line-clamp-1">
+              <div
+                key={pr.number}
+                className="flex justify-between items-start gap-2"
+              >
+                <span className="text-[14px] font-mono text-zinc-700 dark:text-zinc-300 hover:text-[#ff6b1a] transition-colors flex-1 line-clamp-1 cursor-pointer">
                   #{pr.number} {pr.title}
-                </a>
-                <span className="text-[13px] font-mono text-zinc-400 dark:text-zinc-700 shrink-0">{pr.time}</span>
+                </span>
+                <span className="text-[13px] font-mono text-zinc-400 dark:text-zinc-700 shrink-0">
+                  {pr.time}
+                </span>
               </div>
             ))}
           </div>
@@ -59,11 +66,16 @@ export function Repository() {
           </div>
           <div className="space-y-2">
             {issues.map((issue) => (
-              <div key={issue.number} className="flex justify-between items-start gap-2">
-                <a href="#" className="text-[14px] font-mono text-zinc-700 dark:text-zinc-300 hover:text-[#ff6b1a] transition-colors flex-1 line-clamp-1">
+              <div
+                key={issue.number}
+                className="flex justify-between items-start gap-2"
+              >
+                <span className="text-[14px] font-mono text-zinc-700 dark:text-zinc-300 hover:text-[#ff6b1a] transition-colors flex-1 line-clamp-1 cursor-pointer">
                   #{issue.number} {issue.title}
-                </a>
-                <span className="text-[13px] font-mono text-zinc-400 dark:text-zinc-700 shrink-0">{issue.time}</span>
+                </span>
+                <span className="text-[13px] font-mono text-zinc-400 dark:text-zinc-700 shrink-0">
+                  {issue.time}
+                </span>
               </div>
             ))}
           </div>

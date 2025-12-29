@@ -1,14 +1,23 @@
 ---
-import type { Page } from '../types/gaze';
-import { getWidthValue } from '../utils/gaze';
-import Widget from './Widget.astro';
+import Widget from './Widget.astro'
+import type { Page } from '../types/gaze'
+import type { WidgetConfig, WidgetProps } from '../types/widget'
+import { getWidthValue } from '../utils/gaze'
+import { WidgetError } from './WidgetError'
 
 interface Props {
-  page: Page;
+  page: Page
+  widgetDataMap: Map<string, WidgetProps>
 }
 
-const { page } = Astro.props;
-const maxWidth = getWidthValue(page.width);
+const { page, widgetDataMap } = Astro.props
+const maxWidth = getWidthValue(page.width)
+
+// Helper to generate unique slug for widget
+const generateSlug = (config: WidgetConfig, index: number): string => {
+  if (config.slug) return config.slug
+  return `${config.type}-${index}`
+}
 ---
 
 <div class="gaze-page min-h-screen w-full">
@@ -16,35 +25,79 @@ const maxWidth = getWidthValue(page.width);
     {/* Head Widgets - Full Width */}
     {page.headWidgets && page.headWidgets.length > 0 && (
       <div class="head-widgets mb-8">
-        {page.headWidgets.map((widget) => (
-          <div class="mb-4">
-            <Widget widget={widget} />
-          </div>
-        ))}
+        {page.headWidgets.map((widgetConfig, index) => {
+          const slug = generateSlug(widgetConfig, index)
+          const widgetProps = widgetDataMap.get(slug)
+
+          if (!widgetProps) {
+            return (
+              <div class="mb-4 glass rounded-lg p-4 text-white/40">
+                Widget "{widgetConfig.type}" not found
+              </div>
+            )
+          }
+
+          if (widgetProps.error) {
+            return (
+              <div class="mb-4">
+                <WidgetError />
+              </div>
+            )
+          }
+
+          return (
+            <div class="mb-4">
+              <Widget {...widgetProps} />
+            </div>
+          )
+        })}
       </div>
     )}
 
     {/* Column Layout */}
     <div class="columns-container flex flex-col md:flex-row gap-6">
-      {page.columns.map((column) => (
-        <div
-          class={`column ${
-            column.size === 'small'
-              ? 'column-small w-full md:w-[300px] flex-shrink-0'
-              : 'column-full w-full flex-1'
-          }`}
-          data-column-size={column.size}
-        >
-          {/* Widgets in Column */}
-          {column.widgets && column.widgets.length > 0 && (
-            <div class="column-widgets space-y-4">
-              {column.widgets.map((widget) => (
-                <Widget widget={widget} />
-              ))}
-            </div>
-          )}
-        </div>
-      ))}
+      {(() => {
+        let widgetIndex = (page.headWidgets?.length || 0)
+
+        return page.columns.map((column) => (
+          <div
+            class={`column ${
+              column.size === 'small'
+                ? 'column-small w-full md:w-75 shrink-0'
+                : 'column-full w-full flex-1'
+            }`}
+            data-column-size={column.size}
+          >
+            {/* Widgets in Column */}
+            {column.widgets && column.widgets.length > 0 && (
+              <div class="column-widgets space-y-4">
+                {column.widgets.map((widgetConfig) => {
+                  const slug = generateSlug(widgetConfig, widgetIndex++)
+                  const widgetProps = widgetDataMap.get(slug)
+
+                  if (!widgetProps) {
+                    return (
+                      <div class="glass rounded-lg p-4 text-white/40">
+                        Widget "{widgetConfig.type}" not found
+                      </div>
+                    )
+                  }
+
+                  if (widgetProps.error) {
+                    return (
+                      <div class="mb-4">
+                        <WidgetError />
+                      </div>
+                    )
+                  }
+
+                  return <Widget {...widgetProps} />
+                })}
+              </div>
+            )}
+          </div>
+        ))
+      })()}
     </div>
   </div>
 </div>
