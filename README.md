@@ -40,9 +40,12 @@ bun run build
 bun run preview
 ```
 
-### Deployment
+## Deployment
 
-See the [Deployment Guide](docs/DEPLOYMENT.md) for instructions on deploying to GitHub Pages.
+Gaze supports multiple deployment platforms. Choose the one that fits your needs:
+
+<a href="https://github.com/2eha0/gaze/actions/workflows/deploy.yml" rel="nofollow"><img src="https://img.shields.io/badge/deploy-GitHub%20Pages-black?style=for-the-badge&logo=github" alt="Deploy to GitHub Pages" style="max-width: 100%;"></a>
+
 
 ## Widget System
 
@@ -93,6 +96,19 @@ bun run format
 # Check and fix
 bun run check
 ```
+
+## Environment Variables
+
+If your widgets require API keys, create a `.env` file (copy from `.env.example`):
+
+```bash
+# Weather widget
+OPEN_METEO_API_KEY=your_api_key_here
+
+# Add more as needed
+```
+
+For CI/CD, add these as secrets in your repository settings (Settings → Secrets and variables → Actions).
 
 ## License
 
