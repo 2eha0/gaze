@@ -1,0 +1,86 @@
+---
+import type { Page } from '../types/gaze';
+import { getWidthValue } from '../utils/gaze';
+import Widget from './Widget.astro';
+
+interface Props {
+  page: Page;
+}
+
+const { page } = Astro.props;
+const maxWidth = getWidthValue(page.width);
+---
+
+<div class="gaze-page min-h-screen w-full">
+  <div class="page-container mx-auto px-4 py-8" style={`max-width: ${maxWidth}`}>
+    {/* Head Widgets - Full Width */}
+    {page.headWidgets && page.headWidgets.length > 0 && (
+      <div class="head-widgets mb-8">
+        {page.headWidgets.map((widget) => (
+          <div class="mb-4">
+            <Widget widget={widget} />
+          </div>
+        ))}
+      </div>
+    )}
+
+    {/* Column Layout */}
+    <div class="columns-container flex flex-col md:flex-row gap-6">
+      {page.columns.map((column) => (
+        <div
+          class={`column ${
+            column.size === 'small'
+              ? 'column-small w-full md:w-[300px] flex-shrink-0'
+              : 'column-full w-full flex-1'
+          }`}
+          data-column-size={column.size}
+        >
+          {/* Widgets in Column */}
+          {column.widgets && column.widgets.length > 0 && (
+            <div class="column-widgets space-y-4">
+              {column.widgets.map((widget) => (
+                <Widget widget={widget} />
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+  .gaze-page {
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  .columns-container {
+    align-items: flex-start;
+  }
+
+  /* Mobile: Stack all columns vertically */
+  @media (max-width: 767px) {
+    .columns-container {
+      flex-direction: column;
+    }
+
+    .column-small,
+    .column-full {
+      width: 100%;
+    }
+  }
+
+  /* Desktop: Apply size constraints */
+  @media (min-width: 768px) {
+    .column-small {
+      width: 300px;
+      flex-shrink: 0;
+    }
+
+    .column-full {
+      flex: 1;
+      min-width: 0; /* Prevent flex item overflow */
+    }
+  }
+</style>

@@ -1,0 +1,115 @@
+---
+import type { Widget } from '../types/gaze';
+import { getWidgetSlug } from '../utils/gaze';
+
+// Import widget implementations here as they are created
+// For now, we'll have a placeholder for unknown widget types
+
+interface Props {
+  widget: Widget;
+}
+
+const { widget } = Astro.props;
+const slug = getWidgetSlug(widget);
+---
+
+<div class="widget-container glass rounded-lg overflow-hidden" data-widget-type={widget.type} data-widget-slug={slug}>
+  {!widget.hideHeader && widget.title && (
+    <div class="widget-header border-b border-white/10 px-4 py-3">
+      <h2 class="text-sm font-semibold text-white/90">{widget.title}</h2>
+    </div>
+  )}
+
+  <div class="widget-content p-4">
+    {/* Dynamic widget rendering based on type */}
+    {widget.type === 'welcome' && (
+      <div class="text-center py-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Welcome to Gaze</h1>
+        <p class="text-white/70">Your personalized dashboard</p>
+      </div>
+    )}
+
+    {widget.type === 'calendar' && (
+      <div class="text-white/70">
+        <p class="text-sm">Calendar widget placeholder</p>
+        <p class="text-xs mt-2">Implementation pending</p>
+      </div>
+    )}
+
+    {widget.type === 'weather' && (
+      <div class="text-white/70">
+        <p class="text-sm">Weather widget placeholder</p>
+        <p class="text-xs mt-2">Implementation pending</p>
+      </div>
+    )}
+
+    {widget.type === 'rss-feed' && (
+      <div class="text-white/70">
+        <p class="text-sm">RSS Feed widget placeholder</p>
+        <p class="text-xs mt-2">Implementation pending</p>
+      </div>
+    )}
+
+    {widget.type === 'bookmarks' && (
+      <div class="text-white/70">
+        <p class="text-sm">Bookmarks widget placeholder</p>
+        <p class="text-xs mt-2">Implementation pending</p>
+      </div>
+    )}
+
+    {widget.type === 'clock' && (
+      <div class="text-white/70">
+        <p class="text-sm">Clock widget placeholder</p>
+        <p class="text-xs mt-2">Implementation pending</p>
+      </div>
+    )}
+
+    {widget.type === 'notes' && (
+      <div class="text-white/70">
+        <p class="text-sm">Notes widget placeholder</p>
+        <p class="text-xs mt-2">Implementation pending</p>
+      </div>
+    )}
+
+    {widget.type === 'stats' && (
+      <div class="text-white/70">
+        <p class="text-sm">Statistics widget placeholder</p>
+        <p class="text-xs mt-2">Implementation pending</p>
+      </div>
+    )}
+
+    {widget.type === 'charts' && (
+      <div class="text-white/70">
+        <p class="text-sm">Charts widget placeholder</p>
+        <p class="text-xs mt-2">Implementation pending</p>
+      </div>
+    )}
+
+    {widget.type === 'notifications' && (
+      <div class="text-white/70">
+        <p class="text-sm">Notifications widget placeholder</p>
+        <p class="text-xs mt-2">Implementation pending</p>
+      </div>
+    )}
+
+    {widget.type === 'markdown' && (
+      <div class="text-white/70">
+        <p class="text-sm">Markdown widget placeholder</p>
+        <p class="text-xs mt-2">Implementation pending</p>
+      </div>
+    )}
+
+    {/* Fallback for unknown widget types */}
+    {!['welcome', 'calendar', 'weather', 'rss-feed', 'bookmarks', 'clock', 'notes', 'stats', 'charts', 'notifications', 'markdown'].includes(widget.type) && (
+      <div class="text-white/50">
+        <p class="text-sm">Unknown widget type: {widget.type}</p>
+      </div>
+    )}
+  </div>
+</div>
+
+<style>
+  .widget-container {
+    height: fit-content;
+  }
+</style>

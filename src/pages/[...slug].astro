@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GazeLayout from '../components/GazeLayout.astro';
+import { getAllPagePaths, getPageBySlug } from '../utils/gaze';
+
+export async function getStaticPaths() {
+  return getAllPagePaths();
+}
+
+const { slug } = Astro.params;
+const page = getPageBySlug(slug);
+
+// If page not found, return 404
+if (!page) {
+  return Astro.redirect('/404');
+}
+
+const pageTitle = `${page.name} - Gaze Dashboard`;
+---
+
+<BaseLayout title={pageTitle}>
+  <GazeLayout page={page} />
+</BaseLayout>

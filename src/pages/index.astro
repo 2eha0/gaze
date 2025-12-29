@@ -1,78 +1,13 @@
 ---
-import '../styles/globals.css'
-import { Header } from '../components/Header'
-import { Calendar } from '../components/Calendar'
-import { RSSFeed } from '../components/RSSFeed'
-import { TwitchChannels } from '../components/TwitchChannels'
-import { NewsFeed } from '../components/NewsFeed'
-import { Videos } from '../components/Videos'
-import { Subreddits } from '../components/Subreddits'
-import { Weather } from '../components/Weather'
-import { Repository } from '../components/Repository'
-import { Markets } from '../components/Markets'
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GazeLayout from '../components/GazeLayout.astro';
+import { gazeConfig } from '../config/gaze';
 
-const title = 'Gaze Dashboard'
+// First page is always the homepage
+const page = gazeConfig.pages[0];
+const pageTitle = `${page.name} - Gaze Dashboard`;
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="description" content="Glance-like SSG Dashboard" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
-    <script is:inline>
-      // 主题初始化脚本 - 必须在 body 渲染前执行，避免闪烁
-      (function() {
-        const theme = localStorage.getItem('theme') || 'dark';
-        const root = document.documentElement;
-
-        if (theme === 'dark') {
-          root.classList.add('dark');
-        } else if (theme === 'light') {
-          root.classList.remove('dark');
-        } else {
-          // system - 跟随系统设置
-          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            root.classList.add('dark');
-          } else {
-            root.classList.remove('dark');
-          }
-        }
-      })();
-    </script>
-  </head>
-  <body>
-    <main class="min-h-screen p-4 md:p-6 lg:p-8">
-      <div class="max-w-450 mx-auto">
-        <Header client:load />
-
-        <!-- Three Column Grid Layout -->
-        <div class="grid grid-cols-1 lg:grid-cols-[300px_1fr_300px] gap-3">
-          <!-- Left Column -->
-          <div class="flex flex-col gap-3">
-            <Calendar client:load />
-            <RSSFeed client:load />
-            <TwitchChannels client:load />
-          </div>
-
-          <!-- Center Column (Widest) -->
-          <div class="flex flex-col gap-3">
-            <NewsFeed client:load />
-            <Videos client:load />
-            <Subreddits client:load />
-          </div>
-
-          <!-- Right Column -->
-          <div class="flex flex-col gap-3">
-            <Weather client:load />
-            <Repository client:load />
-            <Markets client:load />
-          </div>
-        </div>
-      </div>
-    </main>
-  </body>
-</html>
+<BaseLayout title={pageTitle}>
+  <GazeLayout page={page} />
+</BaseLayout>

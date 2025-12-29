@@ -1,0 +1,52 @@
+---
+import '../styles/globals.css';
+import Navigation from '../components/Navigation.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Gaze Dashboard',
+  description = 'Configuration-driven SSG Dashboard'
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <script is:inline>
+      // Theme initialization script - must execute before body renders to avoid flash
+      (function() {
+        const theme = localStorage.getItem('theme') || 'dark';
+        const root = document.documentElement;
+
+        if (theme === 'dark') {
+          root.classList.add('dark');
+        } else if (theme === 'light') {
+          root.classList.remove('dark');
+        } else {
+          // system - follow system preference
+          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            root.classList.add('dark');
+          } else {
+            root.classList.remove('dark');
+          }
+        }
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen">
+    <Navigation />
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
