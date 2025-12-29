@@ -4,7 +4,7 @@ import type { GazeConfig } from '../types/gaze'
  * Gaze Dashboard Configuration
  * This is the main configuration file that defines all pages, layouts, and widgets
  */
-export const gazeConfig: GazeConfig = {
+export const gazeConfig = {
   pages: [
     {
       // First page is the homepage (/)
@@ -17,8 +17,7 @@ export const gazeConfig: GazeConfig = {
             {
               type: 'weather',
               title: 'Weather',
-              location: 'San Francisco',
-              apiKey: process.env.WEATHER_API_KEY,
+              location: 'Shanghai',
             },
             {
               type: 'rss',
@@ -42,4 +41,4 @@ export const gazeConfig: GazeConfig = {
       ],
     },
   ],
-}
+} satisfies GazeConfig

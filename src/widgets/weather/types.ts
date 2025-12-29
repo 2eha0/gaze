@@ -9,8 +9,9 @@ import type { WidgetConfig } from '../../types/widget'
  */
 export interface WeatherWidgetConfig extends WidgetConfig {
   type: 'weather'
-  location?: string // City name or coordinates
-  apiKey?: string // Optional API key for weather service
+  latitude?: number // Latitude coordinate
+  longitude?: number // Longitude coordinate
+  location?: string // Display name for the location
 }
 
 /**

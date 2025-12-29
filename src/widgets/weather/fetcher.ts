@@ -1,87 +1,91 @@
 /**
  * Weather Widget Fetcher
- * Fetches current weather data at build time
+ * Fetches current weather data at build time using Open-Meteo API
  */
 
 import type { WidgetFetcher } from '../../types/widget'
 import type { WeatherData, WeatherWidgetConfig } from './types'
 
 /**
- * Mock weather data generator (for MVP)
- * In production, replace with actual API calls to services like:
- * - OpenWeatherMap
- * - WeatherAPI
- * - Weather.gov
+ * WMO Weather Code to description mapping
+ * Based on WMO Code 4677
  */
-function generateMockWeatherData(location: string): WeatherData {
-  // Generate realistic mock data
-  const conditions = ['Sunny', 'Partly Cloudy', 'Cloudy', 'Rainy', 'Clear']
-  const randomCondition = conditions[Math.floor(Math.random() * conditions.length)]
-
-  return {
-    location,
-    temperature: Math.floor(Math.random() * 30) + 5, // 5-35°C
-    condition: randomCondition,
-    humidity: Math.floor(Math.random() * 40) + 40, // 40-80%
-    windSpeed: Math.floor(Math.random() * 25) + 5, // 5-30 km/h
-    lastUpdated: new Date().toISOString(),
-  }
+const WMO_CODES: Record<number, string> = {
+  0: 'Clear sky',
+  1: 'Mainly clear',
+  2: 'Partly cloudy',
+  3: 'Overcast',
+  45: 'Foggy',
+  48: 'Depositing rime fog',
+  51: 'Light drizzle',
+  53: 'Moderate drizzle',
+  55: 'Dense drizzle',
+  61: 'Slight rain',
+  63: 'Moderate rain',
+  65: 'Heavy rain',
+  71: 'Slight snow',
+  73: 'Moderate snow',
+  75: 'Heavy snow',
+  77: 'Snow grains',
+  80: 'Slight rain showers',
+  81: 'Moderate rain showers',
+  82: 'Violent rain showers',
+  85: 'Slight snow showers',
+  86: 'Heavy snow showers',
+  95: 'Thunderstorm',
+  96: 'Thunderstorm with slight hail',
+  99: 'Thunderstorm with heavy hail',
 }
 
 /**
- * Fetch weather data from OpenWeatherMap API
- * Requires OPENWEATHER_API_KEY environment variable
+ * Fetch weather data from Open-Meteo API
+ * Free, no API key required
  */
-async function fetchFromOpenWeather(location: string, apiKey: string): Promise<WeatherData> {
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&units=metric&appid=${apiKey}`
+async function fetchFromOpenMeteo(
+  latitude: number,
+  longitude: number,
+  location: string,
+): Promise<WeatherData> {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&temperature_unit=celsius&wind_speed_unit=kmh`
 
   const response = await fetch(url)
 
   if (!response.ok) {
-    throw new Error(`OpenWeather API error: ${response.status}`)
+    throw new Error(`Open-Meteo API error: ${response.status}`)
   }
 
   const data = await response.json()
+  const current = data.current
+
+  // Map WMO weather code to description
+  const weatherCode = current.weather_code as number
+  const condition = WMO_CODES[weatherCode] || 'Unknown'
 
   return {
-    location: data.name,
-    temperature: data.main.temp,
-    condition: data.weather[0].description,
-    humidity: data.main.humidity,
-    windSpeed: data.wind.speed * 3.6, // Convert m/s to km/h
-    icon: data.weather[0].icon,
-    lastUpdated: new Date().toISOString(),
+    location,
+    temperature: current.temperature_2m,
+    condition,
+    humidity: current.relative_humidity_2m,
+    windSpeed: current.wind_speed_10m,
+    lastUpdated: current.time,
   }
 }
 
 /**
  * Weather Widget Fetcher
- * Fetches weather data at build time
+ * Fetches weather data at build time using Open-Meteo API
  */
 export const weatherFetcher: WidgetFetcher<WeatherWidgetConfig, WeatherData> = async (config) => {
+  // Default to San Francisco coordinates if not provided
+  const latitude = config.latitude ?? 37.7749
+  const longitude = config.longitude ?? -122.4194
   const location = config.location || 'San Francisco'
-  console.log(`[Weather Fetcher] Fetching weather for: ${location}`)
 
-  try {
-    // Try to use real API if key is provided
-    const apiKey = config.apiKey || process.env.OPENWEATHER_API_KEY
+  console.log(`[Weather Fetcher] Fetching weather for: ${location} (${latitude}, ${longitude})`)
 
-    if (apiKey) {
-      console.log('[Weather Fetcher] Using OpenWeatherMap API')
-      const data = await fetchFromOpenWeather(location, apiKey)
-      console.log(
-        `[Weather Fetcher] Successfully fetched weather: ${data.temperature}°C, ${data.condition}`,
-      )
-      return data
-    }
-
-    // Fallback to mock data
-    console.log('[Weather Fetcher] No API key found, using mock data')
-    return generateMockWeatherData(location)
-  } catch (error) {
-    console.error('[Weather Fetcher] Failed to fetch weather:', error)
-
-    // Return fallback mock data
-    return generateMockWeatherData(location)
-  }
+  const data = await fetchFromOpenMeteo(latitude, longitude, location)
+  console.log(
+    `[Weather Fetcher] Successfully fetched weather: ${data.temperature}°C, ${data.condition}`,
+  )
+  return data
 }
