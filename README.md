@@ -5,10 +5,10 @@ A Glance-like SSG (Static Site Generator) Dashboard built with Astro, React, and
 ## Architecture
 
 **Pure SSG (Snapshot Model)** - Zero runtime fetch architecture:
-- All data is fetched during CI/CD build process
+- All data is fetched during build process via widget fetchers
 - No client-side API calls
-- Data is validated via Valibot and stored as static JSON files
-- Astro Content Collections ingest the data for build
+- Each widget has its own fetcher that runs during Astro build
+- Data is embedded directly into static HTML
 
 ## Tech Stack
 
@@ -30,13 +30,10 @@ A Glance-like SSG (Static Site Generator) Dashboard built with Astro, React, and
 # Install dependencies
 bun install
 
-# Run data harvest script
-bun run harvest
-
-# Start development server
+# Start development server (fetches data automatically)
 bun run dev
 
-# Build for production
+# Build for production (includes data fetching)
 bun run build
 
 # Preview production build
@@ -47,43 +44,30 @@ bun run preview
 
 See the [Deployment Guide](docs/DEPLOYMENT.md) for instructions on deploying to GitHub Pages.
 
-## Data Harvesting
+## Widget System
 
-The project uses a **data harvest script** (`scripts/harvest.ts`) to fetch data from APIs:
+The dashboard uses a **widget-based architecture** where each widget fetches its own data during build:
 
-1. Configure your data sources in `scripts/harvest.ts`
-2. Add environment variables for API tokens (if needed)
-3. Run `bun run harvest` to fetch and validate data
-4. Data is saved to `src/content/dashboard/data.json`
-5. Astro Content Collections automatically ingest the data during build
+1. Widgets are defined in `src/widgets/` directory
+2. Each widget has a `fetcher.ts` that runs during build
+3. Add environment variables to `.env` for API keys
+4. Widget data is fetched in parallel (max 10 concurrent requests)
+5. Failed widgets show error state instead of breaking the build
 
-### Example Data Source Configuration
-
-```typescript
-// In scripts/harvest.ts
-const DATA_SOURCES = {
-  github: {
-    url: 'https://api.github.com/repos/owner/repo',
-    headers: {
-      'Authorization': `token ${process.env.GITHUB_TOKEN}`,
-    },
-  },
-};
-```
+See [src/widgets/README.md](src/widgets/README.md) for detailed guide on creating widgets.
 
 ## Project Structure
 
 ```
 gaze/
 ├── src/
-│   ├── components/     # React components
-│   ├── content/        # Data files (Content Collections)
-│   │   └── dashboard/  # Dashboard data JSON files
+│   ├── components/     # React components (BentoGrid, etc.)
+│   ├── config/         # Dashboard configuration
 │   ├── layouts/        # Astro layouts
-│   ├── pages/          # Astro pages
-│   └── styles/         # Global styles
-├── scripts/
-│   └── harvest.ts      # Data fetching script
+│   ├── lib/            # Utility functions (widgetData.ts)
+│   ├── pages/          # Astro pages (index.astro)
+│   ├── styles/         # Global styles & Tailwind config
+│   └── widgets/        # Widget definitions (component + fetcher)
 ├── public/             # Static assets
 └── astro.config.mjs    # Astro configuration
 ```
@@ -108,34 +92,6 @@ bun run format
 
 # Check and fix
 bun run check
-```
-
-## CI/CD Integration
-
-Set up GitHub Actions to run the harvest script on a schedule:
-
-```yaml
-# .github/workflows/build.yml
-name: Build Dashboard
-
-on:
-  schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
-      - run: bun install
-      - run: bun run harvest
-        env:
-          # Add your API tokens here
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: bun run build
-      - # Deploy step here
 ```
 
 ## License
