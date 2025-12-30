@@ -110,6 +110,17 @@ OPEN_METEO_API_KEY=your_api_key_here
 
 For CI/CD, add these as secrets in your repository settings (Settings → Secrets and variables → Actions).
 
+## Use as Browser New Tab Page
+
+You can set your deployed Gaze dashboard as your browser's new tab page using the **New Tab Redirect** Chrome extension:
+
+1. Install [New Tab Redirect](https://chrome.google.com/webstore/detail/new-tab-redirect/icpgjfneehieebagbmdbhnlpiopdcmna) from Chrome Web Store
+2. Click the extension icon and go to **Options**
+3. In the **Redirect URL** field, enter your GitHub Pages URL (e.g., `https://yourusername.github.io/gaze/`)
+4. Click **Save**
+
+Now every new tab will open your personalized Gaze dashboard.
+
 ## License
 
 MIT
