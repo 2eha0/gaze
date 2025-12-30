@@ -5,6 +5,8 @@
  */
 
 import { registerWidget } from '../lib/registry'
+import { hackerNewsWidget } from './hacker-news'
+import type { HackerNewsWidgetConfig } from './hacker-news/types'
 import { lobstersWidget } from './lobsters'
 import type { LobstersWidgetConfig } from './lobsters/types'
 import { rssWidget } from './rss'
@@ -23,6 +25,7 @@ export function registerAllWidgets(): void {
   registerWidget('rss', rssWidget)
   registerWidget('youtube', youtubeWidget)
   registerWidget('lobsters', lobstersWidget)
+  registerWidget('hacker-news', hackerNewsWidget)
 
   console.log('[Widgets] All widgets registered successfully')
 }
@@ -35,6 +38,7 @@ export type { WeatherData, WeatherWidgetConfig } from './weather'
 export type { RSSData, RSSItem, RSSWidgetConfig } from './rss'
 export type { YouTubeData, YouTubeVideo, YouTubeWidgetConfig } from './youtube'
 export type { LobstersData, LobstersStory, LobstersWidgetConfig } from './lobsters'
+export type { HackerNewsData, HackerNewsStory, HackerNewsWidgetConfig } from './hacker-news'
 
 /**
  * Union type of all registered widget configs
@@ -45,3 +49,4 @@ export type WidgetConfigUnion =
   | RSSWidgetConfig
   | YouTubeWidgetConfig
   | LobstersWidgetConfig
+  | HackerNewsWidgetConfig

@@ -15,12 +15,11 @@ export const gazeConfig = {
           size: 'small',
           widgets: [
             {
-              type: 'rss',
-              title: 'YC News',
-              feedUrl: 'https://news.ycombinator.com/rss',
+              type: 'hacker-news',
+              title: 'Hacker News Top Stories',
               limit: 10,
-              style: 'vertical-list',
               collapseAfter: 5,
+              sortBy: 'top',
             },
             {
               type: 'rss',

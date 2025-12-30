@@ -1,0 +1,28 @@
+---
+/**
+ * Hacker News Widget Content Component
+ * Renders Hacker News posts with points, comments, domain, and time
+ * Container and header are handled by Widget.astro
+ */
+
+import type { WidgetProps } from '../../types/widget'
+import type { HackerNewsData, HackerNewsWidgetConfig } from './types'
+import { HackerNewsList } from './HackerNewsList'
+
+interface Props extends WidgetProps<HackerNewsData> {
+  config: HackerNewsWidgetConfig
+}
+
+const { config, data } = Astro.props
+
+// Configuration options with defaults
+const collapseAfter = config.collapseAfter ?? 5
+---
+
+{data && (
+  <HackerNewsList
+    stories={data.stories}
+    collapseAfter={collapseAfter}
+    client:load
+  />
+)}
