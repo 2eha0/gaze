@@ -43,7 +43,7 @@ export function LobstersList({ stories, collapseAfter }: LobstersListProps) {
             >
               {/* Title + Tags row */}
               <div className="flex items-center gap-2">
-                <h3 className="text-sm text-white/90 hover:text-blue-400 transition-colors shrink-0 max-w-[70%] truncate">
+                <h3 className="text-sm text-white/90 hover:text-[#ff6b1a] transition-colors shrink-0 max-w-[70%] truncate">
                   {story.title}
                 </h3>
                 {/* Tags - left aligned, next to title */}

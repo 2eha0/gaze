@@ -55,7 +55,7 @@ export function RSSDetailedList({ items, collapseAfter }: RSSDetailedListProps) 
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-white/90 mb-1 hover:text-blue-400 transition-colors line-clamp-2">
+                  <h3 className="text-sm font-medium text-white/90 mb-1 hover:text-[#ff6b1a] transition-colors line-clamp-2">
                     {item.title}
                   </h3>
                   {item.description && (
