@@ -37,6 +37,8 @@ export function YouTubeHorizontalCards({ videos }: YouTubeHorizontalCardsProps) 
                   alt={video.title}
                   className="w-full h-full object-cover"
                   loading="lazy"
+                  width="280"
+                  height="158"
                 />
               ) : (
                 <div className="absolute inset-0 bg-linear-to-br from-zinc-800/30 to-zinc-900/50 group-hover:from-zinc-700/30 transition-colors" />

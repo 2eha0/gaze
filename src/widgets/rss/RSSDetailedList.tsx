@@ -49,6 +49,8 @@ export function RSSDetailedList({ items, collapseAfter }: RSSDetailedListProps) 
                       alt={item.title}
                       className="w-24 h-16 object-cover rounded bg-white/5"
                       loading="lazy"
+                      width="96"
+                      height="64"
                     />
                   </div>
                 )}

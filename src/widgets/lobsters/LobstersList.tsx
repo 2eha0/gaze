@@ -30,9 +30,9 @@ export function LobstersList({ stories, collapseAfter }: LobstersListProps) {
   return (
     <div className="lobsters-list">
       <div className="lobsters-items space-y-1">
-        {visibleStories.map((story) => (
+        {visibleStories.map((story, index) => (
           <article
-            key={story.commentsUrl}
+            key={story.commentsUrl + index}
             className="lobsters-item"
           >
             <a
@@ -83,12 +83,12 @@ export function LobstersList({ stories, collapseAfter }: LobstersListProps) {
                 </span>
 
                 {/* Comments */}
-                <a
-                  href={story.commentsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-0.5 hover:text-white/60 transition-colors"
-                  onClick={(e) => e.stopPropagation()}
+                <span
+                  className="flex items-center gap-0.5 hover:text-white/60 transition-colors cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    window.open(story.commentsUrl, '_blank', 'noopener,noreferrer')
+                  }}
                 >
                   <svg
                     className="w-3 h-3"
@@ -105,7 +105,7 @@ export function LobstersList({ stories, collapseAfter }: LobstersListProps) {
                     />
                   </svg>
                   {story.commentCount}
-                </a>
+                </span>
 
                 {/* Separator */}
                 <span>·</span>

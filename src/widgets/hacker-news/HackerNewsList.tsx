@@ -70,12 +70,12 @@ export function HackerNewsList({ stories, collapseAfter }: HackerNewsListProps) 
                 </span>
 
                 {/* Comments */}
-                <a
-                  href={story.commentsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-0.5 hover:text-white/60 transition-colors"
-                  onClick={(e) => e.stopPropagation()}
+                <span
+                  className="flex items-center gap-0.5 hover:text-white/60 transition-colors cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    window.open(story.commentsUrl, '_blank', 'noopener,noreferrer')
+                  }}
                 >
                   <svg
                     className="w-3 h-3"
@@ -92,7 +92,7 @@ export function HackerNewsList({ stories, collapseAfter }: HackerNewsListProps) 
                     />
                   </svg>
                   {story.commentCount}
-                </a>
+                </span>
 
                 {/* Separator */}
                 <span>·</span>

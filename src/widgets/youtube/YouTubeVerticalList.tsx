@@ -48,6 +48,8 @@ export function YouTubeVerticalList({ videos, collapseAfter }: YouTubeVerticalLi
                     alt={video.title}
                     className="w-full h-full object-cover"
                     loading="lazy"
+                    width="96"
+                    height="54"
                   />
                 ) : (
                   <div className="w-full h-full bg-linear-to-br from-zinc-800/30 to-zinc-900/50" />

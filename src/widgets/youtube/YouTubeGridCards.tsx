@@ -54,6 +54,8 @@ export function YouTubeGridCards({ videos, collapseAfter }: YouTubeGridCardsProp
                     alt={video.title}
                     className="w-full h-full object-cover"
                     loading="lazy"
+                    width="200"
+                    height="113"
                   />
                 ) : (
                   <div className="absolute inset-0 bg-linear-to-br from-zinc-800/30 to-zinc-900/50 group-hover:from-zinc-700/30 transition-colors" />

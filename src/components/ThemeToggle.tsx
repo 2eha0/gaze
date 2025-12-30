@@ -52,10 +52,14 @@ export function ThemeToggle() {
     return (
       <button
         type="button"
-        className="w-8 h-8 rounded-md flex items-center justify-center glass hover:bg-white/10 transition-colors"
+        className={cn(
+          'px-3 h-8 rounded-md flex items-center gap-2 glass hover:bg-white/10 transition-colors',
+          'text-xs font-mono',
+        )}
         aria-label="Toggle theme"
       >
         <span className="text-sm">🌓</span>
+        <span className="hidden sm:inline text-zinc-400 invisible">System</span>
       </button>
     )
   }
