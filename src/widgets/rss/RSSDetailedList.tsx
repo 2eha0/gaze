@@ -30,7 +30,7 @@ export function RSSDetailedList({ items, collapseAfter, hideDate = false }: RSSD
 
   return (
     <div className="rss-detailed-list">
-      <div className="rss-items space-y-4">
+      <div className="rss-items space-y-1">
         {visibleItems.map((item) => (
           <article
             key={item.link}
