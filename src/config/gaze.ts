@@ -28,10 +28,22 @@ export const gazeConfig = {
           size: 'full',
           widgets: [
             {
-              type: 'lobsters',
-              limit: 15,
-              sortBy: 'hot',
-              collapseAfter: 8,
+              type: 'group',
+              widgets: [
+                {
+                  type: 'lobsters',
+                  limit: 10,
+                  sortBy: 'hot',
+                  collapseAfter: 8,
+                },
+                {
+                  type: 'hacker-news',
+                  title: 'Hacker News Top Stories',
+                  limit: 10,
+                  collapseAfter: 5,
+                  sortBy: 'top',
+                },
+              ],
             },
             {
               type: 'youtube',

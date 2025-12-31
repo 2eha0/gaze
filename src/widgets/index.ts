@@ -5,6 +5,7 @@
  */
 
 import { registerWidget } from '../lib/registry'
+import { groupWidget } from './group'
 import { hackerNewsWidget } from './hacker-news'
 import type { HackerNewsWidgetConfig } from './hacker-news/types'
 import { lobstersWidget } from './lobsters'
@@ -28,6 +29,7 @@ export function registerAllWidgets(): void {
   registerWidget('lobsters', lobstersWidget)
   registerWidget('hacker-news', hackerNewsWidget)
   registerWidget('split-column', splitColumnWidget)
+  registerWidget('group', groupWidget)
 
   console.log('[Widgets] All widgets registered successfully')
 }
@@ -42,6 +44,7 @@ export type { YouTubeData, YouTubeVideo, YouTubeWidgetConfig } from './youtube'
 export type { LobstersData, LobstersStory, LobstersWidgetConfig } from './lobsters'
 export type { HackerNewsData, HackerNewsStory, HackerNewsWidgetConfig } from './hacker-news'
 export type { SplitColumnData, SplitColumnWidgetConfigBase } from './split-column'
+export type { GroupData, GroupWidgetConfigBase } from './group'
 
 /**
  * Union type of all registered widget configs (non-container widgets)
@@ -52,6 +55,21 @@ type BaseWidgetConfigUnion =
   | YouTubeWidgetConfig
   | LobstersWidgetConfig
   | HackerNewsWidgetConfig
+
+/**
+ * Group Widget Configuration with base widget types only
+ * Cannot contain split-column or other group widgets
+ */
+export interface GroupWidgetConfig {
+  type: 'group'
+  title?: string
+  slug?: string
+  hideHeader?: boolean
+  /** Array of child widget configurations to display in tabs (no group or split-column allowed) */
+  widgets: BaseWidgetConfigUnion[]
+  /** Index signature for WidgetConfig compatibility */
+  [key: string]: unknown
+}
 
 /**
  * Split Column Widget Configuration with recursive widget types
@@ -74,4 +92,4 @@ export interface SplitColumnWidgetConfig {
  * Union type of all registered widget configs
  * This enables type-safe widget configuration with autocomplete
  */
-export type WidgetConfigUnion = BaseWidgetConfigUnion | SplitColumnWidgetConfig
+export type WidgetConfigUnion = BaseWidgetConfigUnion | GroupWidgetConfig | SplitColumnWidgetConfig

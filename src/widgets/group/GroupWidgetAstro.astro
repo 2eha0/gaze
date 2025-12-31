@@ -1,0 +1,98 @@
+---
+/**
+ * Group Widget Component (Astro)
+ * Renders child widgets with tab navigation
+ */
+
+import { WidgetError } from '../../components/WidgetError'
+import { getWidget } from '../../lib/registry'
+import type { WidgetProps } from '../../types/widget'
+import { GroupTabs } from './GroupTabs'
+import type { GroupData, GroupWidgetConfigBase } from './types'
+
+interface Props extends WidgetProps<GroupData> {
+  config: GroupWidgetConfigBase
+}
+
+const { data } = Astro.props
+
+const childWidgets = data?.childWidgets || []
+
+// Prepare tab data
+const tabs = childWidgets.map((widgetProps, index) => ({
+  title: widgetProps.config.title || widgetProps.config.type,
+  index,
+}))
+---
+
+<div class="widget-wrapper h-fit" data-widget="group">
+  {childWidgets.length === 0 ? (
+    <div class="widget-content glass rounded-lg overflow-hidden p-3">
+      <div class="text-white/50">
+        <p class="text-sm">No widgets configured in group</p>
+      </div>
+    </div>
+  ) : (
+    <>
+      <!-- Tab Navigation (Header area) -->
+      <div class="widget-header px-1 pb-1.5">
+        <GroupTabs tabs={tabs} client:load />
+      </div>
+
+      <!-- Widget Content (Card area) -->
+      <div class="widget-content glass rounded-lg overflow-hidden">
+        <div class="relative min-h-50">
+          {childWidgets.map((widgetProps, index) => {
+            const childConfig = widgetProps.config
+            const isError = widgetProps.error || (widgetProps.data && typeof widgetProps.data === 'object' && 'error' in widgetProps.data)
+            const errorMessage = isError && widgetProps.data && typeof widgetProps.data === 'object' && 'message' in widgetProps.data
+              ? String(widgetProps.data.message)
+              : 'Failed to fetch data'
+
+            const widgetDef = getWidget(childConfig.type)
+            const WidgetComponent = widgetDef?.component
+
+            return (
+              <div class={`group-panel p-3 ${index === 0 ? 'block' : 'hidden'}`} data-panel={index}>
+                {isError ? (
+                  <WidgetError widgetType={childConfig.type} error={errorMessage} client:load />
+                ) : !WidgetComponent ? (
+                  <div class="text-white/50">
+                    <p class="text-sm">Unknown widget type: {childConfig.type}</p>
+                    <p class="text-xs mt-2">Widget not registered in the registry</p>
+                  </div>
+                ) : (
+                  <WidgetComponent config={childConfig} data={widgetProps.data} />
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </>
+  )}
+</div>
+
+<script>
+  // Handle tab switching - update panel visibility
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement
+    if (target.classList.contains('group-tab')) {
+      const widget = target.closest('[data-widget="group"]')
+      if (widget) {
+        const panels = widget.querySelectorAll('.group-panel')
+        const index = parseInt(target.getAttribute('data-index') || '0')
+
+        panels.forEach((panel, i) => {
+          if (i === index) {
+            panel.classList.remove('hidden')
+            panel.classList.add('block')
+          } else {
+            panel.classList.remove('block')
+            panel.classList.add('hidden')
+          }
+        })
+      }
+    }
+  })
+</script>
