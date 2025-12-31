@@ -23,6 +23,7 @@ export interface RSSWidgetConfig extends WidgetConfig {
   singleLineTitles?: boolean // Truncate titles to one line (only for vertical-list)
   style?: RSSWidgetStyle // Widget style (default: vertical-list)
   hideDate?: boolean // Hide date display (useful for feeds without proper pubDate like trending feeds)
+  descriptionField?: 'contentSnippet' | 'content' | 'summary' // Which field to use for description (default: contentSnippet, then content)
 }
 
 /**

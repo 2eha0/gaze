@@ -73,11 +73,30 @@ export const rssFetcher: WidgetFetcher<RSSWidgetConfig, RSSData> = async (config
         )
       }
 
+      // Extract description based on config
+      let description: string | undefined
+
+      if (config.descriptionField) {
+        // Use the specified field
+        const fieldValue = item[config.descriptionField]
+        if (fieldValue) {
+          // Strip HTML tags if present
+          description = fieldValue.replace(/<[^>]*>/g, '').trim()
+        }
+      } else {
+        // Default behavior: try contentSnippet first, then content
+        if (item.contentSnippet) {
+          description = item.contentSnippet.trim()
+        } else if (item.content) {
+          description = item.content.replace(/<[^>]*>/g, '').trim()
+        }
+      }
+
       return {
         title: item.title || 'Untitled',
         link: item.link || '#',
         pubDate: item.pubDate || item.isoDate || new Date().toISOString(),
-        description: item.contentSnippet || item.content || undefined,
+        description,
         image: imageUrl,
         author,
         categories,
