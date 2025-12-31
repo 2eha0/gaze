@@ -1,5 +1,4 @@
 import { cn } from '../lib/utils'
-import { ThemeToggle } from './ThemeToggle'
 
 const navLinks = [
   { name: 'Home', href: '#', active: true },
@@ -30,7 +29,6 @@ export function Header() {
           </a>
         ))}
       </nav>
-      <ThemeToggle />
     </header>
   )
 }

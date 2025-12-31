@@ -60,31 +60,33 @@ export const myWidgetFetcher: WidgetFetcher<MyWidgetConfig, MyWidgetData> = asyn
 
 ### 4. Create UI Component (`MyWidget.astro`)
 
+**Note**: Widget components should focus only on rendering content. Error handling and container styling are handled by the parent `Widget.astro` wrapper component.
+
 ```astro
 ---
 import type { WidgetProps } from '../../types/widget'
-import { WidgetError } from '../../components/WidgetError'
-import type { MyWidgetData } from './types'
+import type { MyWidgetConfig, MyWidgetData } from './types'
 
-interface Props extends WidgetProps<MyWidgetData> {}
+interface Props extends WidgetProps<MyWidgetData> {
+  config: MyWidgetConfig
+}
 
 const { config, data } = Astro.props
-
-// Check for errors
-const isError = data && typeof data === 'object' && 'error' in data
-const errorMessage = isError && 'message' in data ? String(data.message) : 'Failed to fetch data'
 ---
 
-<div class="my-widget glass rounded-lg p-6">
-  {isError ? (
-    <WidgetError widgetType="My Widget" error={errorMessage} client:load />
-  ) : !data ? (
-    <WidgetError widgetType="My Widget" error="No data available" client:load />
-  ) : (
-    <!-- Render widget content -->
-  )}
-</div>
+{data && (
+  <!-- Render your widget content here -->
+  <!-- The Widget.astro wrapper handles .glass, .rounded-lg, padding, and error states -->
+  <div class="my-widget-content">
+    <!-- Your content here -->
+  </div>
+)}
 ```
+
+**Important**: Do NOT include:
+- Container elements with `.glass`, `.rounded-lg`, or padding classes (handled by Widget.astro)
+- Error handling logic (handled by Widget.astro)
+- WidgetError component imports (handled by Widget.astro)
 
 ### 5. Create Widget Export (`index.ts`)
 
@@ -132,12 +134,67 @@ Add to your `src/config/gaze.ts`:
 
 ## Best Practices
 
-1. **Error Handling**: Always include error state handling in your widget component
+1. **Error Handling**: Widget error states are automatically handled by Widget.astro wrapper
 2. **Type Safety**: Define clear TypeScript interfaces for config and data
-3. **Fallback Data**: Provide fallback/mock data in fetcher if API fails
-4. **Loading States**: Consider adding loading indicators for async operations
-5. **Responsive Design**: Use Tailwind utilities for responsive layouts
-6. **Accessibility**: Include proper ARIA labels and semantic HTML
+3. **Fallback Data**: Fetchers should return empty arrays/objects on error, not throw
+4. **Responsive Design**: Use Tailwind utilities for responsive layouts
+5. **Accessibility**: Include proper ARIA labels and semantic HTML
+
+## Shared Utilities and Components
+
+To reduce code duplication, use these shared utilities:
+
+### Date/Time Utils (`src/lib/dateUtils.ts`)
+```typescript
+import { formatRelativeTime } from '../../lib/dateUtils'
+
+// Formats ISO date to "2h ago", "3d ago", etc.
+const timeAgo = formatRelativeTime(item.publishedAt)
+```
+
+### URL Utils (`src/lib/urlUtils.ts`)
+```typescript
+import { extractDomain } from '../../lib/urlUtils'
+
+// Extracts domain from URL, removes www prefix
+const domain = extractDomain('https://www.example.com/path') // "example.com"
+```
+
+### HTTP Utils (`src/lib/http.ts`)
+```typescript
+import { httpFetch, USER_AGENT } from '../../lib/http'
+
+// Fetch with automatic retry and standard User-Agent
+const response = await httpFetch('https://api.example.com/data')
+```
+
+### Collapsible List Hook (`src/hooks/useCollapsibleList.ts`)
+```typescript
+import { useCollapsibleList } from '../../hooks/useCollapsibleList'
+
+const { shouldCollapse, isExpanded, visibleCount, hiddenCount, toggleExpanded } =
+  useCollapsibleList({ totalCount: items.length, collapseAfter: 5 })
+
+const visibleItems = items.slice(0, visibleCount)
+```
+
+### Shared Components
+
+**CollapseButton** (`src/components/CollapseButton.tsx`)
+```typescript
+import { CollapseButton } from '../../components/CollapseButton'
+
+{shouldCollapse && hiddenCount > 0 && (
+  <CollapseButton isExpanded={isExpanded} hiddenCount={hiddenCount} onToggle={toggleExpanded} />
+)}
+```
+
+**EmptyState** (`src/components/EmptyState.tsx`)
+```typescript
+import { EmptyState } from '../../components/EmptyState'
+
+{items.length === 0 && <EmptyState message="No items available" />}
+```
 
 ## Architecture Benefits
 

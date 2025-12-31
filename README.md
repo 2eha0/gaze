@@ -2,6 +2,8 @@
 
 A Glance-like SSG (Static Site Generator) Dashboard built with Astro, React, and Tailwind CSS v4.
 
+![Gaze Dashboard Screenshot](screenshot.png)
+
 ## Architecture
 
 **Pure SSG (Snapshot Model)** - Zero runtime fetch architecture:

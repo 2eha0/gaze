@@ -3,9 +3,10 @@
  * Fetches posts from Lobsters API during build time
  */
 
+import { httpFetch } from '../../lib/http'
+import { extractDomain } from '../../lib/urlUtils'
 import type { WidgetFetcher } from '../../types/widget'
 import type { LobstersData, LobstersStory, LobstersWidgetConfig } from './types'
-import { httpFetch } from '../../lib/http'
 
 interface LobstersPostResponse {
   created_at: string
@@ -15,19 +16,6 @@ interface LobstersPostResponse {
   comment_count: number
   comments_url: string
   tags: string[]
-}
-
-/**
- * Extract domain from URL
- */
-function extractDomain(url: string): string {
-  if (!url) return ''
-  try {
-    const urlObj = new URL(url)
-    return urlObj.hostname.replace(/^www\./, '')
-  } catch {
-    return ''
-  }
 }
 
 /**

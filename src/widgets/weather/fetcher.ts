@@ -4,9 +4,9 @@
  * Refactored based on Glance Go implementation
  */
 
+import { httpFetch } from '../../lib/http'
 import type { WidgetFetcher } from '../../types/widget'
 import type { WeatherColumn, WeatherData, WeatherWidgetConfig } from './types'
-import { httpFetch } from '../../lib/http'
 
 /**
  * WMO Weather Code to description mapping

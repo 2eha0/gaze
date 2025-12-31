@@ -1,9 +1,12 @@
 /**
- * Hacker News Widget Utilities
+ * Date and Time Utilities
+ * Shared date formatting functions used across widgets
  */
 
 /**
  * Format a date string to relative time (e.g., "2h ago", "3d ago")
+ * @param dateString - ISO date string or any valid date string
+ * @returns Formatted relative time string
  */
 export function formatRelativeTime(dateString: string): string {
   const date = new Date(dateString)

@@ -4,9 +4,9 @@
  */
 
 import Parser from 'rss-parser'
+import { USER_AGENT } from '../../lib/http'
 import type { WidgetFetcher } from '../../types/widget'
 import type { YouTubeData, YouTubeVideo, YouTubeWidgetConfig } from './types'
-import { USER_AGENT } from '../../lib/http'
 
 /**
  * YouTube Widget Fetcher

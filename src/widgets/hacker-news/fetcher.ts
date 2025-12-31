@@ -4,9 +4,10 @@
  * Based on the Go implementation from Glance
  */
 
+import { httpFetch } from '../../lib/http'
+import { extractDomain } from '../../lib/urlUtils'
 import type { WidgetFetcher } from '../../types/widget'
 import type { HackerNewsData, HackerNewsStory, HackerNewsWidgetConfig } from './types'
-import { httpFetch } from '../../lib/http'
 
 /**
  * Hacker News API response for a single post
@@ -18,19 +19,6 @@ interface HackerNewsPostResponse {
   url?: string
   descendants: number // comment count
   time: number // Unix timestamp
-}
-
-/**
- * Extract domain from URL
- */
-function extractDomain(url: string): string {
-  if (!url) return ''
-  try {
-    const urlObj = new URL(url)
-    return urlObj.hostname.replace(/^www\./, '')
-  } catch {
-    return ''
-  }
 }
 
 /**

@@ -4,8 +4,8 @@
  */
 
 import { useState } from 'react'
+import { formatRelativeTime } from '../../lib/dateUtils'
 import type { RSSItem } from './types'
-import { formatRelativeTime } from './utils'
 
 interface RSSDetailedListProps {
   items: RSSItem[]
@@ -95,15 +95,6 @@ export function RSSDetailedList({ items, collapseAfter, hideDate = false }: RSSD
           {isExpanded ? 'Show less' : `Show ${hiddenCount} more`}
         </button>
       )}
-
-      <style>{`
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      `}</style>
     </div>
   )
 }

@@ -4,8 +4,8 @@
  */
 
 import { useState } from 'react'
+import { formatRelativeTime } from '../../lib/dateUtils'
 import type { YouTubeVideo } from './types'
-import { formatRelativeTime } from './utils'
 
 interface YouTubeVerticalListProps {
   videos: YouTubeVideo[]
@@ -56,9 +56,7 @@ export function YouTubeVerticalList({ videos, collapseAfter }: YouTubeVerticalLi
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm widget-link line-clamp-2">
-                  {video.title}
-                </h3>
+                <h3 className="text-sm widget-link line-clamp-2">{video.title}</h3>
                 <div className="flex items-center gap-1 mt-1 text-xs text-white/40">
                   <span className="truncate">{video.channelTitle}</span>
                   <span>·</span>
@@ -79,15 +77,6 @@ export function YouTubeVerticalList({ videos, collapseAfter }: YouTubeVerticalLi
           {isExpanded ? 'Show less' : `Show ${hiddenCount} more`}
         </button>
       )}
-
-      <style>{`
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      `}</style>
     </div>
   )
 }

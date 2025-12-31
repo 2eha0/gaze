@@ -4,9 +4,9 @@
  */
 
 import Parser from 'rss-parser'
+import { USER_AGENT } from '../../lib/http'
 import type { WidgetFetcher } from '../../types/widget'
 import type { RSSData, RSSItem, RSSWidgetConfig } from './types'
-import { USER_AGENT } from '../../lib/http'
 
 // Extended RSS item type for non-standard fields
 interface ExtendedRSSItem {

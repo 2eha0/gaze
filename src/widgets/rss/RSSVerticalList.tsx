@@ -4,8 +4,8 @@
  */
 
 import { useState } from 'react'
+import { formatRelativeTime } from '../../lib/dateUtils'
 import type { RSSItem } from './types'
-import { formatRelativeTime } from './utils'
 
 interface RSSVerticalListProps {
   items: RSSItem[]
@@ -14,7 +14,12 @@ interface RSSVerticalListProps {
   hideDate?: boolean
 }
 
-export function RSSVerticalList({ items, collapseAfter, singleLineTitles, hideDate = false }: RSSVerticalListProps) {
+export function RSSVerticalList({
+  items,
+  collapseAfter,
+  singleLineTitles,
+  hideDate = false,
+}: RSSVerticalListProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const shouldCollapse = collapseAfter !== -1 && items.length > collapseAfter
@@ -71,15 +76,6 @@ export function RSSVerticalList({ items, collapseAfter, singleLineTitles, hideDa
           {isExpanded ? 'Show less' : `Show ${hiddenCount} more`}
         </button>
       )}
-
-      <style>{`
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      `}</style>
     </div>
   )
 }

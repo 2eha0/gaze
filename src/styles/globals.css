@@ -31,9 +31,9 @@
   --border-secondary: 0 0% 95%;
 
   /* Widget link colors - warm yellow theme */
-  --link-default: 45 50% 55%;        /* 温和的土黄色，低饱和度 */
-  --link-hover: 45 70% 65%;          /* hover时更亮的黄色 */
-  --link-visited: 45 40% 48%;        /* 点击后浅一些的颜色 */
+  --link-default: 45 50% 55%; /* 温和的土黄色，低饱和度 */
+  --link-hover: 45 70% 65%; /* hover时更亮的黄色 */
+  --link-visited: 45 40% 48%; /* 点击后浅一些的颜色 */
 
   /* Glass effect colors for light mode */
   --glass-bg: rgba(255, 255, 255, 0.7);
@@ -69,9 +69,9 @@
   --border-secondary: 0 0% 12%;
 
   /* Widget link colors - warm yellow theme (same for dark mode) */
-  --link-default: 45 50% 55%;        /* 温和的土黄色，低饱和度 */
-  --link-hover: 45 70% 65%;          /* hover时更亮的黄色 */
-  --link-visited: 45 40% 48%;        /* 点击后浅一些的颜色 */
+  --link-default: 45 50% 55%; /* 温和的土黄色，低饱和度 */
+  --link-hover: 45 70% 65%; /* hover时更亮的黄色 */
+  --link-visited: 45 40% 48%; /* 点击后浅一些的颜色 */
 
   /* Glass effect colors for dark mode */
   --glass-bg: rgba(255, 255, 255, 0.05);
@@ -128,4 +128,12 @@ body {
 
 .widget-link:visited:hover {
   color: hsl(var(--link-hover));
+}
+
+/* Text truncation utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

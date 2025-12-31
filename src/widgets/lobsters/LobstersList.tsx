@@ -3,9 +3,10 @@
  * Displays lobsters posts with tags, points, comments, and score
  */
 
-import { useState } from 'react'
+import { CollapseButton } from '../../components/CollapseButton'
+import { useCollapsibleList } from '../../hooks/useCollapsibleList'
+import { formatRelativeTime } from '../../lib/dateUtils'
 import type { LobstersStory } from './types'
-import { formatRelativeTime } from './utils'
 
 interface LobstersListProps {
   stories: LobstersStory[]
@@ -13,11 +14,13 @@ interface LobstersListProps {
 }
 
 export function LobstersList({ stories, collapseAfter }: LobstersListProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const { shouldCollapse, isExpanded, visibleCount, hiddenCount, toggleExpanded } =
+    useCollapsibleList({
+      totalCount: stories.length,
+      collapseAfter,
+    })
 
-  const shouldCollapse = collapseAfter !== -1 && stories.length > collapseAfter
-  const visibleStories = shouldCollapse && !isExpanded ? stories.slice(0, collapseAfter) : stories
-  const hiddenCount = shouldCollapse ? stories.length - collapseAfter : 0
+  const visibleStories = stories.slice(0, visibleCount)
 
   if (stories.length === 0) {
     return (
@@ -43,9 +46,7 @@ export function LobstersList({ stories, collapseAfter }: LobstersListProps) {
             >
               {/* Title + Tags row */}
               <div className="flex items-center gap-2">
-                <h3 className="text-sm widget-link shrink-0 max-w-[70%] truncate">
-                  {story.title}
-                </h3>
+                <h3 className="text-sm widget-link shrink-0 max-w-[70%] truncate">{story.title}</h3>
                 {/* Tags - left aligned, next to title */}
                 {story.tags.length > 0 && (
                   <div className="flex gap-1 shrink-0">
@@ -127,13 +128,11 @@ export function LobstersList({ stories, collapseAfter }: LobstersListProps) {
       </div>
 
       {shouldCollapse && hiddenCount > 0 && (
-        <button
-          type="button"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="mt-2 text-xs text-white/40 hover:text-white/60 uppercase tracking-wider transition-colors"
-        >
-          {isExpanded ? 'Show less' : `Show ${hiddenCount} more`}
-        </button>
+        <CollapseButton
+          isExpanded={isExpanded}
+          hiddenCount={hiddenCount}
+          onToggle={toggleExpanded}
+        />
       )}
     </div>
   )

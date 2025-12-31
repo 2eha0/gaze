@@ -8,29 +8,29 @@
  * Mimics Chrome on macOS to avoid blocking by servers
  */
 export const USER_AGENT =
-	'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
 
 /**
  * Default headers for all HTTP requests
  */
 export const DEFAULT_HEADERS = {
-	'User-Agent': USER_AGENT,
-	Accept: 'application/json, text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8',
-	'Accept-Language': 'en-US,en;q=0.9',
-	'Accept-Encoding': 'gzip, deflate, br',
-} as const;
+  'User-Agent': USER_AGENT,
+  Accept: 'application/json, text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8',
+  'Accept-Language': 'en-US,en;q=0.9',
+  'Accept-Encoding': 'gzip, deflate, br',
+} as const
 
 /**
  * Retry configuration
  */
-const MAX_RETRIES = 3;
-const INITIAL_RETRY_DELAY = 1000; // 1 second
+const MAX_RETRIES = 3
+const INITIAL_RETRY_DELAY = 1000 // 1 second
 
 /**
  * Sleep for a specified number of milliseconds
  */
 function sleep(ms: number): Promise<void> {
-	return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 /**
@@ -39,7 +39,7 @@ function sleep(ms: number): Promise<void> {
  * @returns Delay in milliseconds
  */
 function calculateBackoff(attempt: number): number {
-	return INITIAL_RETRY_DELAY * 2 ** attempt;
+  return INITIAL_RETRY_DELAY * 2 ** attempt
 }
 
 /**
@@ -62,58 +62,55 @@ function calculateBackoff(attempt: number): number {
  * const data = await response.json();
  * ```
  */
-export async function httpFetch(
-	url: string | URL,
-	options?: RequestInit,
-): Promise<Response> {
-	const mergedOptions: RequestInit = {
-		...options,
-		headers: {
-			...DEFAULT_HEADERS,
-			...options?.headers,
-		},
-	};
+export async function httpFetch(url: string | URL, options?: RequestInit): Promise<Response> {
+  const mergedOptions: RequestInit = {
+    ...options,
+    headers: {
+      ...DEFAULT_HEADERS,
+      ...options?.headers,
+    },
+  }
 
-	let lastError: Error | null = null;
+  let lastError: Error | null = null
 
-	for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-		try {
-			const response = await fetch(url, mergedOptions);
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    try {
+      const response = await fetch(url, mergedOptions)
 
-			// Don't retry on 4xx client errors (bad request, unauthorized, not found, etc.)
-			// These are not transient errors and won't be fixed by retrying
-			if (!response.ok && response.status >= 400 && response.status < 500) {
-				return response;
-			}
+      // Don't retry on 4xx client errors (bad request, unauthorized, not found, etc.)
+      // These are not transient errors and won't be fixed by retrying
+      if (!response.ok && response.status >= 400 && response.status < 500) {
+        return response
+      }
 
-			// Retry on 5xx server errors (internal server error, service unavailable, etc.)
-			if (!response.ok && response.status >= 500) {
-				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-			}
+      // Retry on 5xx server errors (internal server error, service unavailable, etc.)
+      if (!response.ok && response.status >= 500) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
 
-			// Success - return the response
-			return response;
-		} catch (error) {
-			lastError = error instanceof Error ? error : new Error(String(error));
+      // Success - return the response
+      return response
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error))
 
-			// If this is the last attempt, throw the error
-			if (attempt === MAX_RETRIES - 1) {
-				throw lastError;
-			}
+      // If this is the last attempt, throw the error
+      if (attempt === MAX_RETRIES - 1) {
+        throw lastError
+      }
 
-			// Calculate backoff delay and log retry attempt
-			const delay = calculateBackoff(attempt);
-			console.warn(
-				`[HTTP] Request to ${url} failed (attempt ${attempt + 1}/${MAX_RETRIES}): ${lastError.message}. Retrying in ${delay}ms...`,
-			);
+      // Calculate backoff delay and log retry attempt
+      const delay = calculateBackoff(attempt)
+      console.warn(
+        `[HTTP] Request to ${url} failed (attempt ${attempt + 1}/${MAX_RETRIES}): ${lastError.message}. Retrying in ${delay}ms...`,
+      )
 
-			// Wait before retrying
-			await sleep(delay);
-		}
-	}
+      // Wait before retrying
+      await sleep(delay)
+    }
+  }
 
-	// This should never be reached due to the throw in the loop, but TypeScript needs it
-	throw lastError || new Error('Request failed after all retries');
+  // This should never be reached due to the throw in the loop, but TypeScript needs it
+  throw lastError || new Error('Request failed after all retries')
 }
 
 /**
@@ -130,14 +127,14 @@ export async function httpFetch(
  * ```
  */
 export async function httpFetchJson<T = unknown>(
-	url: string | URL,
-	options?: RequestInit,
+  url: string | URL,
+  options?: RequestInit,
 ): Promise<T> {
-	const response = await httpFetch(url, options);
+  const response = await httpFetch(url, options)
 
-	if (!response.ok) {
-		throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-	}
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+  }
 
-	return response.json();
+  return response.json()
 }
