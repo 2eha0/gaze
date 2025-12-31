@@ -25,7 +25,7 @@ export const DEFAULT_HEADERS = {
 /**
  * Retry configuration
  */
-const MAX_RETRIES = 6
+const MAX_RETRIES = 3
 const INITIAL_RETRY_DELAY = 1000 // 1 second
 
 /**

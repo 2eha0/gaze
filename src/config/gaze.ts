@@ -350,8 +350,8 @@ export const gazeConfig = {
                 },
                 {
                   type: 'rss',
-                  title: 'Bloomberg Markets',
-                  feedUrl: 'https://www.bloomberg.com/feed/podcast/markets-daily-crypto.xml',
+                  title: 'a16z Crypto',
+                  feedUrl: 'https://feeds.simplecast.com/JGE3yC0V',
                   limit: 15,
                   style: 'detailed-list',
                   collapseAfter: 5,
@@ -391,7 +391,7 @@ export const gazeConfig = {
             {
               type: 'rss',
               title: '虎嗅网',
-              feedUrl: 'https://www.huxiu.com/rss/0.xml',
+              feedUrl: 'https://feedx.net/rss/huxiu.xml',
               limit: 10,
               style: 'vertical-list',
               collapseAfter: 5,
