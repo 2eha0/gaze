@@ -3,6 +3,8 @@
  * Provides consistent User-Agent and headers across all HTTP requests
  */
 
+import Parser from 'rss-parser'
+
 /**
  * Standard browser User-Agent string
  * Mimics Chrome on macOS to avoid blocking by servers
@@ -137,4 +139,65 @@ export async function httpFetchJson<T = unknown>(
   }
 
   return response.json()
+}
+
+/**
+ * RSS parser wrapper with automatic retry and standard headers
+ * Use this instead of bare rss-parser in widget fetchers
+ *
+ * Features:
+ * - Automatically retries failed requests up to 3 times
+ * - Uses exponential backoff (1s, 2s, 4s)
+ * - Includes standard browser User-Agent to avoid blocking
+ * - Only retries on network errors or parsing failures
+ *
+ * @param url - The RSS feed URL to fetch
+ * @param customHeaders - Optional custom headers (will be merged with defaults)
+ * @returns Promise that resolves to the parsed RSS feed
+ *
+ * @example
+ * ```ts
+ * const feed = await rssFetch('https://example.com/feed.xml');
+ * console.log(feed.title);
+ * feed.items.forEach(item => console.log(item.title));
+ * ```
+ */
+export async function rssFetch<T = Parser.Output<unknown>>(
+  url: string,
+  customHeaders?: Record<string, string>,
+): Promise<T> {
+  const parser = new Parser({
+    headers: {
+      'User-Agent': USER_AGENT,
+      ...customHeaders,
+    },
+  })
+
+  let lastError: Error | null = null
+
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    try {
+      const feed = await parser.parseURL(url)
+      return feed as T
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error))
+
+      // If this is the last attempt, throw the error
+      if (attempt === MAX_RETRIES - 1) {
+        throw lastError
+      }
+
+      // Calculate backoff delay and log retry attempt
+      const delay = calculateBackoff(attempt)
+      console.warn(
+        `[RSS] Fetch failed for ${url} (attempt ${attempt + 1}/${MAX_RETRIES}): ${lastError.message}. Retrying in ${delay}ms...`,
+      )
+
+      // Wait before retrying
+      await sleep(delay)
+    }
+  }
+
+  // This should never be reached due to the throw in the loop, but TypeScript needs it
+  throw lastError || new Error('RSS fetch failed after all retries')
 }

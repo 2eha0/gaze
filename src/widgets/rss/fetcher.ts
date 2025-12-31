@@ -3,8 +3,8 @@
  * Fetches and parses RSS feeds at build time using rss-parser
  */
 
-import Parser from 'rss-parser'
-import { USER_AGENT } from '../../lib/http'
+import type Parser from 'rss-parser'
+import { rssFetch } from '../../lib/http'
 import type { WidgetFetcher } from '../../types/widget'
 import type { RSSData, RSSItem, RSSWidgetConfig } from './types'
 
@@ -14,6 +14,8 @@ interface ExtendedRSSItem {
   'media:content'?: { url?: string }
   'media:thumbnail'?: { url?: string }
   'dc:creator'?: string
+  author?: string
+  creator?: string
 }
 
 /**
@@ -24,17 +26,11 @@ export const rssFetcher: WidgetFetcher<RSSWidgetConfig, RSSData> = async (config
   console.log(`[RSS Fetcher] Fetching feed: ${config.feedUrl}`)
 
   try {
-    const parser = new Parser({
-      headers: {
-        'User-Agent': USER_AGENT,
-      },
-    })
-
-    const feed = await parser.parseURL(config.feedUrl)
+    const feed = await rssFetch<Parser.Output<ExtendedRSSItem>>(config.feedUrl)
 
     // Convert parsed feed to our data structure
     const items: RSSItem[] = feed.items.map((item) => {
-      const extItem = item as typeof item & ExtendedRSSItem
+      const extItem = item
 
       // Extract image from various RSS formats
       let imageUrl: string | undefined

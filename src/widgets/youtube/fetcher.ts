@@ -3,8 +3,7 @@
  * Fetches recent videos from YouTube channels using RSS feeds at build time
  */
 
-import Parser from 'rss-parser'
-import { USER_AGENT } from '../../lib/http'
+import { rssFetch } from '../../lib/http'
 import type { WidgetFetcher } from '../../types/widget'
 import type { YouTubeData, YouTubeVideo, YouTubeWidgetConfig } from './types'
 
@@ -16,19 +15,13 @@ export const youtubeFetcher: WidgetFetcher<YouTubeWidgetConfig, YouTubeData> = a
   console.log(`[YouTube Fetcher] Fetching videos from ${config.channels.length} channels`)
 
   try {
-    const parser = new Parser({
-      headers: {
-        'User-Agent': USER_AGENT,
-      },
-    })
-
     // Fetch videos from all channels
     const videoPromises = config.channels.map(async (channelId) => {
       try {
         const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`
         console.log(`[YouTube Fetcher] Fetching channel: ${channelId}`)
 
-        const feed = await parser.parseURL(feedUrl)
+        const feed = await rssFetch(feedUrl)
 
         // Extract videos from feed
         const videos: YouTubeVideo[] = feed.items.map((item) => {
