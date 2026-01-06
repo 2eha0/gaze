@@ -13,7 +13,7 @@ const pageTitle = `${page.name} - Gaze Dashboard`
 const widgetDataMap = await fetchPageWidgetData(page)
 ---
 
-<BaseLayout title={pageTitle}>
+<BaseLayout title={pageTitle} currentPage={page}>
   <GazeLayout
     page={page}
     widgetDataMap={widgetDataMap}

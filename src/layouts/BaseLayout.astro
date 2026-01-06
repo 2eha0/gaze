@@ -1,13 +1,15 @@
 ---
 import '../styles/globals.css'
 import Navigation from '../components/Navigation.astro'
+import type { Page } from '../types/gaze'
 
 interface Props {
   title?: string
   description?: string
+  currentPage?: Page
 }
 
-const { title = 'Gaze Dashboard', description = 'Configuration-driven SSG Dashboard' } = Astro.props
+const { title = 'Gaze Dashboard', description = 'Configuration-driven SSG Dashboard', currentPage } = Astro.props
 ---
 
 <!doctype html>
@@ -41,7 +43,7 @@ const { title = 'Gaze Dashboard', description = 'Configuration-driven SSG Dashbo
     </script>
   </head>
   <body class="min-h-screen">
-    <Navigation />
+    <Navigation currentPage={currentPage} />
     <main>
       <slot />
     </main>
