@@ -1,5 +1,13 @@
 ---
 import { getAllPages } from '../utils/gaze'
+import { AIActions } from './AIActions'
+import type { Page } from '../types/gaze'
+
+interface Props {
+  currentPage?: Page
+}
+
+const { currentPage } = Astro.props
 
 const pages = getAllPages()
 const currentPath = Astro.url.pathname
@@ -16,6 +24,10 @@ function buildUrl(path: string): string {
 // Normalize current path for comparison (remove base and trailing slashes)
 const pathWithoutBase = currentPath.replace(new RegExp(`^${baseUrl}`), '') || '/'
 const normalizedCurrentPath = pathWithoutBase === '/' ? '/' : pathWithoutBase.replace(/\/$/, '')
+
+// Determine page info for AI actions
+const pageTitle = currentPage?.name || 'Home'
+const pageSlug = currentPage?.slug || 'home'
 ---
 
 <nav class="gaze-navigation sticky top-0 z-50 glass border-b border-white/10">
@@ -29,7 +41,7 @@ const normalizedCurrentPath = pathWithoutBase === '/' ? '/' : pathWithoutBase.re
       </div>
 
       {/* Navigation Links - Minimal style matching widget headers */}
-      <div class="flex items-center gap-1">
+      <div class="flex items-center gap-1 flex-1">
         {pages.map((page) => {
           const href = buildUrl(page.isHomepage ? '/' : page.slug);
           const comparePath = page.isHomepage ? '/' : `/${page.slug}`;
@@ -50,6 +62,11 @@ const normalizedCurrentPath = pathWithoutBase === '/' ? '/' : pathWithoutBase.re
             </a>
           );
         })}
+      </div>
+
+      {/* AI Actions */}
+      <div class="shrink-0">
+        <AIActions client:load pageTitle={pageTitle} pageSlug={pageSlug} />
       </div>
     </div>
   </div>
